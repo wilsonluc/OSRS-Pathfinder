@@ -16,5 +16,5 @@ aws lambda create-function --function-name Pathfinder --runtime java11 --role ar
 
 ### 3. Invoke Lambda
 ```bash
-aws lambda invoke --function-name Pathfinder --cli-binary-format raw-in-base64-out --payload '{"sourceX": 100, "sourceY": 200, "sourceZ": 300}' response.json --profile user2
+aws lambda invoke --function-name Pathfinder --cli-binary-format raw-in-base64-out --payload '{\"sourceX\": 100, \"sourceY\": 200, \"sourceZ\": 300}' response.json --profile user2
 ```
