@@ -25,12 +25,42 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
+    // JUnit 5 for testing
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+
     // AWS
     implementation 'com.amazonaws:aws-lambda-java-core:1.2.1'
     implementation 'com.amazonaws:aws-lambda-java-events:3.10.0'
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+tasks.register('deployPathfinder', Exec) {
+    description = 'Deploy Lambda function to AWS'
+
+    commandLine 'aws', 'lambda', 'update-function-code',
+            '--function-name', 'Pathfinder',
+            '--zip-file', 'fileb://build/libs/OSRS_Pathfinder.jar',
+            '--profile', 'user2'
+
+//    commandLine 'aws', 'lambda', 'create-function',
+//            '--function-name', 'Pathfinder',
+//            '--runtime', 'java11',
+//            '--role', 'arn:aws:iam::956301286619:role/Pathfinder',
+//            '--handler', 'com.pathfinder.lambda.LambdaHandler::handleRequest',
+//            '--memory-size', '512',
+//            '--timeout', '15',
+//            '--zip-file', 'fileb://build/libs/OSRS_Pathfinder.jar',
+//            '--profile', 'user2'
+}
+
+tasks.register('testPathfinder', TestReport) {
+    description = 'Run tests and save results to build/reports/tests'
+
+    destinationDir = file("$buildDir/reports/tests")
+    reportOn test
 }
 
 test {
