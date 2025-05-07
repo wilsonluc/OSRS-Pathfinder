@@ -6,7 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LambdaHandlerTest {
     @Test
-    public void TestLambdaHandler() {
+    public void testLambdaHandler() {
+        // TODO: Change this to be dynamic, is temporary placeholder
         // Create a sample Request object with mock data
         Request request = new Request();
         request.setSourceX(100);
@@ -19,7 +20,8 @@ public class LambdaHandlerTest {
         // Invoke the handler
         Response response = handler.handleRequest(request, null);
 
+        String expectedResponse = "{\"path\":[{\"source\":{\"x\":100,\"y\":200,\"plane\":0},\"destination\":{\"x\":110,\"y\":210,\"plane\":0}},{\"source\":{\"x\":110,\"y\":210,\"plane\":0},\"destination\":{\"x\":120,\"y\":220,\"plane\":0}}]}";
         // Validate the response
-        assertEquals("Source X: 100", response.getMessage());
+        assertEquals(expectedResponse, response.message());
     }
 }
