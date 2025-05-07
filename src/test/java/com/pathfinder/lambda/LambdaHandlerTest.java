@@ -22,4 +22,14 @@ public class LambdaHandlerTest {
         // Validate the response
         assertEquals("Source X: 100", response.getMessage());
     }
+
+    @Test
+    public void TestA() {
+        assertEquals(1, 1);
+    }
+
+    @Test
+    public void TestB() {
+        assertEquals(2, 2);
+    }
 }

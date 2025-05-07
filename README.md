@@ -1,4 +1,4 @@
-## Build and Deploy Instructions
+## Development Instructions
 
 Follow these steps to build and deploy the application using AWS SAM:
 
@@ -10,14 +10,35 @@ Use Gradle with the Shadow plugin to build the executable fat JAR:
 ```
 
 ### 2. Deploy to AWS Lambda
+
 ```bash
 ./gradlew deployPathfinder
 ```
 
-### 3. Test and Save Results to build/reports/tests/index.html
-```bash
-./gradlew testPathfinder
+## Testing Instructions
+
+Follow these instructions to test the application in a local setting using AWS SAM:
+
+### 1. Build Locally Using SAM
+```cmd
+sam build
 ```
+
+### 2. Test With Sample Payload
+```cmd
+sam local invoke MyJavaLambda --event payload.json
+```
+
+
+
+[//]: # (### 3. Test and Save Results to build/reports/tests/index.html)
+
+[//]: # ()
+[//]: # (```bash)
+
+[//]: # (./gradlew testPathfinder)
+
+[//]: # (```)
 
 [//]: # (### 3. Invoke Lambda)
 

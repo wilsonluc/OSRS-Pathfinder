@@ -1,0 +1,11 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  MyJavaLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.pathfinder.lambda.LambdaHandler
+      Runtime: java11
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 10
