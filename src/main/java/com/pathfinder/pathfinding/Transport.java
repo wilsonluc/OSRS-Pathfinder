@@ -1,8 +1,14 @@
 package com.pathfinder.pathfinding;
 
+import com.pathfinder.pathfinding.node.NodeEdge;
+import com.pathfinder.enums.Type;
+import com.pathfinder.util.Util;
 import lombok.Getter;
 import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
+
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * This class represents a travel point between two WorldPoints.
@@ -21,7 +27,7 @@ public class Transport {
     private final WorldPoint destination;
 
     /**
-     * The additional cost to reach the destination.
+     * The additional cost to reach the destinationWP.
      */
     @Getter
     public int additionalCost;
@@ -45,6 +51,17 @@ public class Transport {
     public static final WorldArea UNDERGROUND_WILDY = new WorldArea(2944, 9918, 320, 442, 0);
 
     /**
+     * File name used for reading in transports (located in resources).
+     */
+    private static final String TRANSPORTS_DIR = "transports.csv";
+
+    /**
+     * Mapping of {@link WorldPointPair} containing source and destination {@link WorldPoint}s against
+     * value of {@link NodeEdge} containing source and destination {@link WorldPoint}s with additional cost.
+     */
+    public static Map<WorldPointPair, NodeEdge> worldPointPairs = new HashMap<>();
+
+    /**
      * Constructs a transport link between two {@link WorldPoint} objects.
      *
      * @param origin      The starting location of the transport
@@ -53,5 +70,68 @@ public class Transport {
     public Transport(WorldPoint origin, WorldPoint destination) {
         this.origin = origin;
         this.destination = destination;
+    }
+
+    /**
+     * Parses the transports from the internal CSV resource file and populates the given maps.
+     *
+     * @param transports       A map from origin {@link WorldPoint} to a list of {@link Transport}s originating from there
+     * @param worldPointPairs  A map from {@link WorldPointPair} to {@link NodeEdge}, used for calculating cost
+     */
+    private static void addTransports(HashMap<WorldPoint, List<Transport>> transports, Map<WorldPointPair, NodeEdge> worldPointPairs) {
+        InputStream inputStream = Transport.class.getClassLoader().getResourceAsStream(TRANSPORTS_DIR);
+        if (inputStream == null) {
+            return;
+        }
+
+        Scanner scanner = new Scanner(inputStream);
+        scanner.nextLine(); // Skip first line
+        while (scanner.hasNextLine()) {
+            String transportLine = scanner.nextLine();
+            addTransport(transportLine, transports, worldPointPairs);
+        }
+        scanner.close();
+    }
+
+    /**
+     * Parses a single line from the transport CSV and adds the transport entry to the relevant maps.
+     *
+     * @param transportLine     The raw CSV line describing the transport
+     * @param transports        Map from {@link WorldPoint} to transport list
+     * @param worldPointPairs   Map from {@link WorldPointPair} to {@link NodeEdge}
+     */
+    private static void addTransport(String transportLine, HashMap<WorldPoint, List<Transport>> transports, Map<WorldPointPair, NodeEdge> worldPointPairs) {
+        if (transportLine.isEmpty() || transportLine.contains("#") || transportLine.equals(",,,,,,,,")) {
+            return;
+        }
+
+        String[] splitString = transportLine.split(",");
+        if (splitString.length < 5) {
+            return;
+        }
+
+        WorldPoint sourceWP = Util.getWorldPoint(splitString[0]);
+        WorldPoint destinationWP = Util.getWorldPoint(splitString[1]);
+        // TODO: Implement filtering based on player properties
+        String menuOption = splitString[2];
+        Integer objectID = Integer.parseInt(splitString[4]);
+
+        Transport transport = new Transport(sourceWP, destinationWP);
+        transports.computeIfAbsent(sourceWP, k -> new ArrayList<>()).add(transport);
+        worldPointPairs.putIfAbsent(new WorldPointPair(sourceWP, destinationWP),
+                new NodeEdge(sourceWP, destinationWP, Type.TRANSPORT));
+    }
+
+    /**
+     * Loads all transport data from the {@code transports.csv} resource and constructs the full transport map.
+     *
+     * @return A {@link HashMap} containing all transports, keyed by origin {@link WorldPoint}
+     */
+    public static HashMap<WorldPoint, List<Transport>> loadAllFromResources() {
+        HashMap<WorldPoint, List<Transport>> transports = new HashMap<>();
+
+        addTransports(transports, worldPointPairs);
+
+        return transports;
     }
 }

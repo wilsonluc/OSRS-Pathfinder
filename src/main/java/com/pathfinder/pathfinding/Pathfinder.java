@@ -22,13 +22,13 @@ public class Pathfinder implements Runnable {
     private final WorldPoint start;
 
     /**
-     * List of target destination points.
+     * List of target destinationWP points.
      */
     @Getter
     private final List<WorldPoint> targets;
 
     /**
-     * Packed 32-bit integer representations of the target destination points for quick lookup.
+     * Packed 32-bit integer representations of the target destinationWP points for quick lookup.
      */
     private final Set<Integer> targetsPacked;
 
@@ -130,15 +130,15 @@ public class Pathfinder implements Runnable {
                 continue;
             }
 
-            if (targetsPacked.contains(neighbor.packedWorldPoint)) {
+            if (targetsPacked.contains(neighbor.packedWP)) {
                 return neighbor;
             }
 
-            if (config.isAvoidWilderness() && config.avoidWilderness(node.packedWorldPoint, neighbor.packedWorldPoint, targetInWilderness)) {
+            if (config.isAvoidWilderness() && config.avoidWilderness(node.packedWP, neighbor.packedWP, targetInWilderness)) {
                 continue;
             }
 
-            visited.set(neighbor.packedWorldPoint);
+            visited.set(neighbor.packedWP);
             if (neighbor instanceof TransportNode) {
                 pending.add(neighbor);
             } else {
@@ -176,7 +176,7 @@ public class Pathfinder implements Runnable {
 
             node = boundary.removeFirst();
 
-            if (targetsPacked.contains(node.packedWorldPoint)) {
+            if (targetsPacked.contains(node.packedWP)) {
                 bestLastNode = node;
                 pathNeedsUpdate = true;
                 break;
@@ -185,12 +185,12 @@ public class Pathfinder implements Runnable {
             int distance = Integer.MAX_VALUE;
             long heuristic = Integer.MAX_VALUE;
             for (WorldPoint target : targets) {
-                int d = WorldPointUtil.distanceBetween(node.packedWorldPoint, WorldPointUtil.packWorldPoint(target));
+                int d = WorldPointUtil.distanceBetween(node.packedWP, WorldPointUtil.packWorldPoint(target));
                 if (d < distance) {
                     distance = d;
                 }
 
-                long h = WorldPointUtil.distanceBetween(node.packedWorldPoint, WorldPointUtil.packWorldPoint(target), 2);
+                long h = WorldPointUtil.distanceBetween(node.packedWP, WorldPointUtil.packWorldPoint(target), 2);
                 if (h < heuristic) {
                     heuristic = h;
                 }

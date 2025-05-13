@@ -1,11 +1,13 @@
 package com.pathfinder.util;
 
+import net.runelite.api.coords.WorldPoint;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Utility class providing common IO operations.
+ * Utility class providing common operations.
  */
 public class Util {
     /**
@@ -28,5 +30,25 @@ public class Util {
 
             result.write(buffer, 0, read);
         }
+    }
+
+    /**
+     * Convert to {@link WorldPoint} from String.
+     *
+     * @param worldPointString String version of {@link WorldPoint}
+     * @return {@link WorldPoint} representation of worldPointString
+     */
+    public static WorldPoint getWorldPoint(String worldPointString) {
+        try {
+            String[] sourceSplit = worldPointString.split(" ");
+            return new WorldPoint(Integer.parseInt(sourceSplit[0]), Integer.parseInt(sourceSplit[1]), Integer.parseInt(sourceSplit[2]));
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("Error: Not enough values in the source string.");
+        } catch (NumberFormatException e) {
+            System.err.println("Error: One of the values is not a valid integer.");
+        } catch (Exception e) {
+            System.err.println("Unexpected error occurred.");
+        }
+        return null;
     }
 }

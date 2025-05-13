@@ -18,7 +18,7 @@ public class Node {
     /**
      * 32-bit integer representation of the {@link WorldPoint} associated with the node.
      */
-    public final int packedWorldPoint;
+    public final int packedWP;
 
     /**
      * Previous node in the path. {@code null} if this node is the start node.
@@ -39,7 +39,7 @@ public class Node {
      * @param additionalCost The additional cost needed to reach this node
      */
     public Node(WorldPoint position, Node previous, int additionalCost) {
-        this.packedWorldPoint = WorldPointUtil.packWorldPoint(position);
+        this.packedWP = WorldPointUtil.packWorldPoint(position);
         this.previous = previous;
         this.cost = cost(previous, additionalCost);
     }
@@ -59,12 +59,12 @@ public class Node {
      * Constructs a new {@code Node} from a 32-bit integer representation of a {@link WorldPoint}, a reference to
      * the previous node, and an additional cost to reach this node.
      *
-     * @param packedWorldPoint 32-bit integer representation of a {@link WorldPoint}
+     * @param packedWP 32-bit integer representation of a {@link WorldPoint}
      * @param previous         The previous node in the path; {@code null} if this is the starting node
      * @param additionalCost   The additional cost needed to reach this node
      */
-    public Node(int packedWorldPoint, Node previous, int additionalCost) {
-        this.packedWorldPoint = packedWorldPoint;
+    public Node(int packedWP, Node previous, int additionalCost) {
+        this.packedWP = packedWP;
         this.previous = previous;
         this.cost = cost(previous, additionalCost);
     }
@@ -73,11 +73,11 @@ public class Node {
      * Constructs a new {@code Node} from a 32-bit integer representation of a {@link WorldPoint} and an additional
      * cost to reach this node.
      *
-     * @param packedWorldPoint 32-bit integer representation of a {@link WorldPoint}
+     * @param packedWP 32-bit integer representation of a {@link WorldPoint}
      * @param previous         The previous node in the path; {@code null} if this is the starting node
      */
-    public Node(int packedWorldPoint, Node previous) {
-        this(packedWorldPoint, previous, 0);
+    public Node(int packedWP, Node previous) {
+        this(packedWP, previous, 0);
     }
 
     /**
@@ -90,7 +90,7 @@ public class Node {
         Node node = this;
 
         while (node != null) {
-            WorldPoint position = WorldPointUtil.unpackWorldPoint(node.packedWorldPoint);
+            WorldPoint position = WorldPointUtil.unpackWorldPoint(node.packedWP);
             path.add(0, position);
             node = node.previous;
         }
@@ -99,15 +99,21 @@ public class Node {
     }
 
     /**
-     * Calculates the cumulative cost to reach this node from the start node, currently using a constant
-     * cost of 1 per step.
+     * Calculates the cumulative cost to reach this node from the start node according to transport type.
      *
-     * @param previous       The previous node in the path
-     * @param additionalCost The additional cost from the previous node to this node
+     * @param previousNode   The previousNode node in the path
+     * @param additionalCost The additional cost from the previousNode node to this node
      * @return The cumulative cost from the start node
      */
-    private int cost(Node previous, int additionalCost) {
-        // TODO: Make use of additionalCost heuristic
-        return previous == null ? 0 : 1;
+    private int cost(Node previousNode, int additionalCost) {
+        int previousCost = 0;
+        int distance = 0;
+
+        if (previousNode != null) {
+            previousCost = previousNode.cost;
+            distance = WorldPointUtil.distanceBetween(previousNode.packedWP, packedWP);
+        }
+
+        return previousCost + distance + additionalCost;
     }
 }

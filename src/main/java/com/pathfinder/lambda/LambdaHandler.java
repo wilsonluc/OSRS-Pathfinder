@@ -4,7 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.pathfinder.CustomWorldPoint;
+import com.pathfinder.pathfinding.node.NodeEdge;
 import net.runelite.api.coords.WorldPoint;
 
 import java.util.ArrayList;
@@ -26,9 +26,9 @@ public class LambdaHandler implements RequestHandler<Request, Response> {
     @Override
     public Response handleRequest(Request request, Context context) {
         // TODO: Change this to be dynamic, is temporary placeholder
-        List<CustomWorldPoint> path = new ArrayList<>();
-        path.add(new CustomWorldPoint(new WorldPoint(100, 200, 0), new WorldPoint(110, 210, 0)));
-        path.add(new CustomWorldPoint(new WorldPoint(110, 210, 0), new WorldPoint(120, 220, 0)));
+        List<NodeEdge> path = new ArrayList<>();
+        path.add(new NodeEdge(new WorldPoint(100, 200, 0), new WorldPoint(110, 210, 0)));
+        path.add(new NodeEdge(new WorldPoint(110, 210, 0), new WorldPoint(120, 220, 0)));
 
         String pathJson = getPathJson(path);
         return new Response(pathJson);
@@ -40,7 +40,7 @@ public class LambdaHandler implements RequestHandler<Request, Response> {
      * @param path List of CustomWorldPoint objects that represent a path
      * @return JSON string representation of the path, wrapped under "path"
      */
-    public String getPathJson(List<CustomWorldPoint> path) {
+    public String getPathJson(List<NodeEdge> path) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("path", new Gson().toJsonTree(path));
         return jsonObject.toString();

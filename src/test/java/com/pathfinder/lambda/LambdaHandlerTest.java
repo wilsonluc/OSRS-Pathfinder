@@ -20,7 +20,7 @@ public class LambdaHandlerTest {
         // Invoke the handler
         Response response = handler.handleRequest(request, null);
 
-        String expectedResponse = "{\"path\":[{\"source\":{\"x\":100,\"y\":200,\"plane\":0},\"destination\":{\"x\":110,\"y\":210,\"plane\":0}},{\"source\":{\"x\":110,\"y\":210,\"plane\":0},\"destination\":{\"x\":120,\"y\":220,\"plane\":0}}]}";
+        String expectedResponse = "{\"path\":[{\"sourceWP\":{\"x\":100,\"y\":200,\"plane\":0},\"destinationWP\":{\"x\":110,\"y\":210,\"plane\":0}},{\"sourceWP\":{\"x\":110,\"y\":210,\"plane\":0},\"destinationWP\":{\"x\":120,\"y\":220,\"plane\":0}}]}";
         // Validate the response
         assertEquals(expectedResponse, response.message());
     }

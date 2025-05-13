@@ -26,7 +26,7 @@ public class VisitedTiles {
     private final byte[] visitedRegionPlanes;
 
     /**
-     * Initializes a new visited tile tracker based on the provided collision map.
+     * Initialises a new visited tile tracker based on the provided collision map.
      *
      * @param map The collision map, used to get region plane counts.
      */

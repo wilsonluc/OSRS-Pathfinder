@@ -1,5 +1,6 @@
 package com.pathfinder.pathfinding;
 
+import com.pathfinder.util.PrimitiveIntHashMap;
 import com.pathfinder.util.WorldPointUtil;
 import lombok.Getter;
 import net.runelite.api.Quest;
@@ -27,6 +28,23 @@ public class PathfinderConfig {
     private final ThreadLocal<CollisionMap> map;
 
     /**
+     * All {@link Transport}s originating from {@link WorldPoint} key.
+     */
+    private final Map<WorldPoint, List<Transport>> allTransports;
+
+    /**
+     * Shallow copy of {@link #allTransports}.
+     */
+    @Getter
+    private final Map<WorldPoint, List<Transport>> transports;
+
+    /**
+     * Custom hash map that maps a 32-bit integer representation of a {@link WorldPoint} to a list of {@link Transport}s.
+     */
+    @Getter
+    private final PrimitiveIntHashMap<List<Transport>> transportsPacked;
+
+    /**
      * The maximum time (in milliseconds) the pathfinder will search before aborting.
      */
     @Getter
@@ -49,10 +67,12 @@ public class PathfinderConfig {
      *
      * @param mapData    The shared collision data for the world
      */
-    public PathfinderConfig(SplitFlagMap mapData) {
+    public PathfinderConfig(SplitFlagMap mapData, Map<WorldPoint, List<Transport>> transports) {
         this.mapData = mapData;
         this.map = ThreadLocal.withInitial(() -> new CollisionMap(this.mapData));
-        // TODO: Add transports
+        this.allTransports = transports;
+        this.transports = new HashMap<>(allTransports.size());
+        this.transportsPacked = new PrimitiveIntHashMap<>(allTransports.size());
     }
 
     /**
@@ -62,6 +82,29 @@ public class PathfinderConfig {
      */
     public CollisionMap getMap() {
         return map.get();
+    }
+
+    /**
+     * Refreshes the internal transport caches from {@link #allTransports}.
+     * <p>
+     * This method creates fresh copies of transport lists for each origin {@link WorldPoint} and stores them in:
+     * <ul>
+     *     <li>{@link #transports} — a direct {@link WorldPoint}-keyed map</li>
+     *     <li>{@link #transportsPacked} — an integer-keyed map using packed {@link WorldPoint}s via
+     *     {@link WorldPointUtil#packWorldPoint(WorldPoint)}</li>
+     * </ul>
+     * <p>
+     * Intended to be called when transport data is updated or initialised.
+     */
+    public void refreshTransportData() {
+        for (Map.Entry<WorldPoint, List<Transport>> entry : allTransports.entrySet()) {
+            List<Transport> usableTransports = new ArrayList<>(entry.getValue().size());
+            usableTransports.addAll(entry.getValue());
+
+            WorldPoint point = entry.getKey();
+            transports.put(point, usableTransports);
+            transportsPacked.put(WorldPointUtil.packWorldPoint(point), usableTransports);
+        }
     }
 
     /**

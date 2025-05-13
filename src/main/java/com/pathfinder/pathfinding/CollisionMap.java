@@ -20,7 +20,7 @@ public class CollisionMap {
     private static final OrdinalDirection[] ORDINAL_VALUES = OrdinalDirection.values();
 
     /**
-     * Backing data source containing collision flags
+     * Backing data sourceWP containing collision flags
      */
     private final SplitFlagMap collisionData;
 
@@ -37,7 +37,7 @@ public class CollisionMap {
     /**
      * Constructs a CollisionMap using the provided collision flag data.
      *
-     * @param collisionData The source of regional collision flag data.
+     * @param collisionData The sourceWP of regional collision flag data.
      */
     public CollisionMap(SplitFlagMap collisionData) {
         this.collisionData = collisionData;
@@ -134,12 +134,20 @@ public class CollisionMap {
      * @return A list of valid neighboring nodes.
      */
     public List<Node> getNeighbors(Node node, VisitedTiles visited, PathfinderConfig config) {
-        int packed = node.packedWorldPoint;
-        int x = WorldPointUtil.unpackWorldX(packed);
-        int y = WorldPointUtil.unpackWorldY(packed);
-        int z = WorldPointUtil.unpackWorldPlane(packed);
+        final int x = WorldPointUtil.unpackWorldX(node.packedWP);
+        final int y = WorldPointUtil.unpackWorldY(node.packedWP);
+        final int z = WorldPointUtil.unpackWorldPlane(node.packedWP);
 
         neighbors.clear();
+
+        List<Transport> transports = config.getTransportsPacked().getOrDefault(node.packedWP, List.of());
+
+        for (Transport transport : transports) {
+            if (visited.get(transport.getDestination())) {
+                continue;
+            }
+            neighbors.add(new TransportNode(transport.getDestination(), node, transport.additionalCost));
+        }
 
         if (isBlocked(x, y, z)) {
             // Region is fully blocked; allow movement to adjacent non-blocked tiles.
@@ -161,13 +169,20 @@ public class CollisionMap {
         }
 
         for (int i = 0; i < traversable.length; i++) {
-            if (!traversable[i]) continue;
-
             OrdinalDirection d = ORDINAL_VALUES[i];
-            int neighborPacked = packedPointFromOrdinal(packed, d);
+            int neighborPacked = packedPointFromOrdinal(node.packedWP, d);
+            if (visited.get(neighborPacked)) continue;
 
-            if (!visited.get(neighborPacked)) {
+            if (traversable[i]) {
                 neighbors.add(new Node(neighborPacked, node));
+            } else if (Math.abs(d.x + d.y) == 1 && isBlocked(x + d.x, y + d.y, z)) {
+                List<Transport> neighborTransports = config.getTransportsPacked().getOrDefault(neighborPacked, List.of());
+                for (Transport transport : neighborTransports) {
+                    if (visited.get(transport.getOrigin())) {
+                        continue;
+                    }
+                    neighbors.add(new Node(transport.getOrigin(), node));
+                }
             }
         }
 
