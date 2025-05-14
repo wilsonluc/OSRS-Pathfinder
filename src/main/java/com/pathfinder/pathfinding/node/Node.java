@@ -44,7 +44,6 @@ public class Node {
         this.cost = cost(previous, additionalCost);
     }
 
-
     /**
      * Constructs a new {@code Node} from a given {@link WorldPoint} and a reference to the previous node.
      *

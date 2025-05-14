@@ -1,4 +1,6 @@
 **TODO LIST:**
-- Add transports
+- Item / level / skill reqs
+- Transports weighting
+- Additional transports
 - Visualiser
-- Create collision map generator
+- Collision map gen

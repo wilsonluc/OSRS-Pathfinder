@@ -66,17 +66,29 @@ public class Transport {
      *
      * @param origin      The starting location of the transport
      * @param destination The end location of the transport
+     * @param type        Type of transport
      */
-    public Transport(WorldPoint origin, WorldPoint destination) {
+    public Transport(WorldPoint origin, WorldPoint destination, Type type) {
         this.origin = origin;
         this.destination = destination;
+        this.additionalCost = type.getAdditionalCost();
+    }
+
+    /**
+     * Constructs a transport link between two {@link WorldPoint} objects.
+     *
+     * @param origin      The starting location of the transport
+     * @param destination The end location of the transport
+     */
+    public Transport(WorldPoint origin, WorldPoint destination) {
+        this(origin, destination, Type.TRANSPORT);
     }
 
     /**
      * Parses the transports from the internal CSV resource file and populates the given maps.
      *
-     * @param transports       A map from origin {@link WorldPoint} to a list of {@link Transport}s originating from there
-     * @param worldPointPairs  A map from {@link WorldPointPair} to {@link NodeEdge}, used for calculating cost
+     * @param transports      A map from origin {@link WorldPoint} to a list of {@link Transport}s originating from there
+     * @param worldPointPairs A map from {@link WorldPointPair} to {@link NodeEdge}, used for calculating cost
      */
     private static void addTransports(HashMap<WorldPoint, List<Transport>> transports, Map<WorldPointPair, NodeEdge> worldPointPairs) {
         InputStream inputStream = Transport.class.getClassLoader().getResourceAsStream(TRANSPORTS_DIR);
@@ -96,9 +108,9 @@ public class Transport {
     /**
      * Parses a single line from the transport CSV and adds the transport entry to the relevant maps.
      *
-     * @param transportLine     The raw CSV line describing the transport
-     * @param transports        Map from {@link WorldPoint} to transport list
-     * @param worldPointPairs   Map from {@link WorldPointPair} to {@link NodeEdge}
+     * @param transportLine   The raw CSV line describing the transport
+     * @param transports      Map from {@link WorldPoint} to transport list
+     * @param worldPointPairs Map from {@link WorldPointPair} to {@link NodeEdge}
      */
     private static void addTransport(String transportLine, HashMap<WorldPoint, List<Transport>> transports, Map<WorldPointPair, NodeEdge> worldPointPairs) {
         if (transportLine.isEmpty() || transportLine.contains("#") || transportLine.equals(",,,,,,,,")) {
