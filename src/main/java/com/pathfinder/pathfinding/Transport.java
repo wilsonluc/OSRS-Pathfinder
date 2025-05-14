@@ -2,6 +2,8 @@ package com.pathfinder.pathfinding;
 
 import com.pathfinder.pathfinding.node.NodeEdge;
 import com.pathfinder.enums.Type;
+import com.pathfinder.pathfinding.transports.FairyRing;
+import com.pathfinder.pathfinding.transports.SpiritTree;
 import com.pathfinder.util.Util;
 import lombok.Getter;
 import net.runelite.api.coords.WorldArea;
@@ -143,7 +145,51 @@ public class Transport {
         HashMap<WorldPoint, List<Transport>> transports = new HashMap<>();
 
         addTransports(transports, worldPointPairs);
+        addSpiritTrees(transports, worldPointPairs);
+        addFairyRings(transports, worldPointPairs);
 
         return transports;
+    }
+
+    /**
+     * Adds all spirit tree teleports to viable transports.
+     *
+     * @param transports      Map of transports to populate to
+     * @param worldPointPairs Map used to store details of transport
+     */
+    private static void addSpiritTrees(HashMap<WorldPoint, List<Transport>> transports, Map<WorldPointPair, NodeEdge> worldPointPairs) {
+        for (SpiritTree spiritTreeSource : SpiritTree.values()) {
+            for (SpiritTree spiritTreeDestination : SpiritTree.values()) {
+                if (spiritTreeSource.equals(spiritTreeDestination)) {
+                    continue;
+                }
+
+                Transport transport = new Transport(spiritTreeSource.getWorldPoint(), spiritTreeDestination.getWorldPoint(), Type.SPIRIT_TREE);
+                transports.computeIfAbsent(spiritTreeSource.getWorldPoint(), k -> new ArrayList<>()).add(transport);
+            }
+        }
+
+        addTransports(transports, worldPointPairs);
+    }
+
+    /**
+     * Adds all fairy ring teleports to viable transports.
+     *
+     * @param transports      Map of transports to populate to
+     * @param worldPointPairs Map used to store details of transport
+     */
+    private static void addFairyRings(HashMap<WorldPoint, List<Transport>> transports, Map<WorldPointPair, NodeEdge> worldPointPairs) {
+        for (FairyRing fairyRingSource : FairyRing.values()) {
+            for (FairyRing fairyRingDestination : FairyRing.values()) {
+                if (fairyRingSource.equals(fairyRingDestination)) {
+                    continue;
+                }
+
+                Transport transport = new Transport(fairyRingSource.getWorldPoint(), fairyRingDestination.getWorldPoint(), Type.FAIRY_RING);
+                transports.computeIfAbsent(fairyRingSource.getWorldPoint(), k -> new ArrayList<>()).add(transport);
+            }
+        }
+
+        addTransports(transports, worldPointPairs);
     }
 }
