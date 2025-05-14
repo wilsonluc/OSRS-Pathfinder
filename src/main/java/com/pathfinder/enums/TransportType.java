@@ -3,7 +3,7 @@ package com.pathfinder.enums;
 import lombok.Getter;
 
 @Getter
-public enum Type {
+public enum TransportType {
     WALK(1),
     TRANSPORT(5),
     SPIRIT_TREE(6),
@@ -12,7 +12,7 @@ public enum Type {
 
     private final int additionalCost;
 
-    Type(int additionalCost) {
+    TransportType(int additionalCost) {
         this.additionalCost = additionalCost;
     }
 }

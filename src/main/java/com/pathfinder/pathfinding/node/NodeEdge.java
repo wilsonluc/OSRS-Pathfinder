@@ -1,6 +1,6 @@
 package com.pathfinder.pathfinding.node;
 
-import com.pathfinder.enums.Type;
+import com.pathfinder.enums.TransportType;
 import lombok.Getter;
 import net.runelite.api.coords.WorldPoint;
 
@@ -11,19 +11,19 @@ import net.runelite.api.coords.WorldPoint;
 public class NodeEdge {
     private final WorldPoint sourceWP;
     private final WorldPoint destinationWP;
-    private final Type type;
+    private final TransportType transportType;
 
     /**
      * Constructs a CustomWorldPoint with specific source, destination, and type of transport
      *
      * @param sourceWP      Starting WorldPoint
      * @param destinationWP Destination WorldPoint
-     * @param type          Travel type (e.g., walk, transport)
+     * @param transportType          Travel type (e.g., walk, transport)
      */
-    public NodeEdge(WorldPoint sourceWP, WorldPoint destinationWP, Type type) {
+    public NodeEdge(WorldPoint sourceWP, WorldPoint destinationWP, TransportType transportType) {
         this.sourceWP = sourceWP;
         this.destinationWP = destinationWP;
-        this.type = type;
+        this.transportType = transportType;
     }
 
     /**
@@ -33,6 +33,6 @@ public class NodeEdge {
      * @param destinationWP WorldPoint node is connected to
      */
     public NodeEdge(WorldPoint sourceWP, WorldPoint destinationWP) {
-        this(sourceWP, destinationWP, Type.WALK);
+        this(sourceWP, destinationWP, TransportType.WALK);
     }
 }

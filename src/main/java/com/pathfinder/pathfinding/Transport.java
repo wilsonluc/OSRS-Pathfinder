@@ -1,7 +1,7 @@
 package com.pathfinder.pathfinding;
 
 import com.pathfinder.pathfinding.node.NodeEdge;
-import com.pathfinder.enums.Type;
+import com.pathfinder.enums.TransportType;
 import com.pathfinder.pathfinding.transports.FairyRing;
 import com.pathfinder.pathfinding.transports.SpiritTree;
 import com.pathfinder.util.Util;
@@ -14,26 +14,13 @@ import java.util.*;
 
 /**
  * This class represents a travel point between two WorldPoints.
+ *
+ * @param origin        The starting point of this transport.
+ * @param destination   The ending point of this transport.
+ * @param transportType The type of this transport.
  */
-public class Transport {
-    /**
-     * The starting point of this transport.
-     */
-    @Getter
-    private final WorldPoint origin;
-
-    /**
-     * The ending point of this transport.
-     */
-    @Getter
-    private final WorldPoint destination;
-
-    /**
-     * The additional cost to reach the destinationWP.
-     */
-    @Getter
-    public int additionalCost;
-
+public record Transport(@Getter WorldPoint origin, @Getter WorldPoint destination,
+                        @Getter TransportType transportType) {
     /**
      * {@link WorldArea} representing Ferox's Enclave.
      */
@@ -64,35 +51,41 @@ public class Transport {
     public static Map<WorldPointPair, NodeEdge> worldPointPairs = new HashMap<>();
 
     /**
-     * Constructs a transport link between two {@link WorldPoint} objects.
+     * Loads all transport data from the {@code transports.csv} resource and constructs the full transport map.
      *
-     * @param origin      The starting location of the transport
-     * @param destination The end location of the transport
-     * @param type        Type of transport
+     * @return A {@link HashMap} containing all transports, keyed by origin {@link WorldPoint}
      */
-    public Transport(WorldPoint origin, WorldPoint destination, Type type) {
-        this.origin = origin;
-        this.destination = destination;
-        this.additionalCost = type.getAdditionalCost();
+    public static HashMap<WorldPoint, List<Transport>> loadAllFromResources(PlayerProperties playerProperties) {
+        HashMap<WorldPoint, List<Transport>> transports = new HashMap<>();
+
+        addTransports(playerProperties, transports);
+        addFairyRings(playerProperties, transports);
+        addSpiritTrees(playerProperties, transports);
+
+        return transports;
     }
 
     /**
-     * Constructs a transport link between two {@link WorldPoint} objects.
+     * Add transport to transports arraylist.
      *
-     * @param origin      The starting location of the transport
-     * @param destination The end location of the transport
+     * @param sourceWP      The origin {@link WorldPoint} of the transport
+     * @param destinationWP The destination {@link WorldPoint} of the transport
+     * @param transport     Contains source & destination {@link WorldPoint}s, as well as transport type
+     * @param transports    Map of all transports, using WorldPoint as key
      */
-    public Transport(WorldPoint origin, WorldPoint destination) {
-        this(origin, destination, Type.TRANSPORT);
+    private static void addTransport(WorldPoint sourceWP, WorldPoint destinationWP, Transport transport, HashMap<WorldPoint, List<Transport>> transports) {
+        transports.computeIfAbsent(sourceWP, k -> new ArrayList<>()).add(transport);
+        worldPointPairs.putIfAbsent(new WorldPointPair(sourceWP, destinationWP),
+                new NodeEdge(sourceWP, destinationWP, TransportType.TRANSPORT));
     }
 
     /**
      * Parses the transports from the internal CSV resource file and populates the given maps.
      *
-     * @param transports      A map from origin {@link WorldPoint} to a list of {@link Transport}s originating from there
-     * @param worldPointPairs A map from {@link WorldPointPair} to {@link NodeEdge}, used for calculating cost
+     * @param playerProperties Transports unlocked for player
+     * @param transports       A map from origin {@link WorldPoint} to a list of {@link Transport}s originating from there
      */
-    private static void addTransports(HashMap<WorldPoint, List<Transport>> transports, Map<WorldPointPair, NodeEdge> worldPointPairs) {
+    private static void addTransports(PlayerProperties playerProperties, HashMap<WorldPoint, List<Transport>> transports) {
         InputStream inputStream = Transport.class.getClassLoader().getResourceAsStream(TRANSPORTS_DIR);
         if (inputStream == null) {
             return;
@@ -102,7 +95,7 @@ public class Transport {
         scanner.nextLine(); // Skip first line
         while (scanner.hasNextLine()) {
             String transportLine = scanner.nextLine();
-            addTransport(transportLine, transports, worldPointPairs);
+            addTransport(transportLine, transports);
         }
         scanner.close();
     }
@@ -110,11 +103,10 @@ public class Transport {
     /**
      * Parses a single line from the transport CSV and adds the transport entry to the relevant maps.
      *
-     * @param transportLine   The raw CSV line describing the transport
-     * @param transports      Map from {@link WorldPoint} to transport list
-     * @param worldPointPairs Map from {@link WorldPointPair} to {@link NodeEdge}
+     * @param transportLine The raw CSV line describing the transport
+     * @param transports    Map from {@link WorldPoint} to transport list
      */
-    private static void addTransport(String transportLine, HashMap<WorldPoint, List<Transport>> transports, Map<WorldPointPair, NodeEdge> worldPointPairs) {
+    private static void addTransport(String transportLine, HashMap<WorldPoint, List<Transport>> transports) {
         if (transportLine.isEmpty() || transportLine.contains("#") || transportLine.equals(",,,,,,,,")) {
             return;
         }
@@ -130,66 +122,53 @@ public class Transport {
         String menuOption = splitString[2];
         Integer objectID = Integer.parseInt(splitString[4]);
 
-        Transport transport = new Transport(sourceWP, destinationWP);
-        transports.computeIfAbsent(sourceWP, k -> new ArrayList<>()).add(transport);
-        worldPointPairs.putIfAbsent(new WorldPointPair(sourceWP, destinationWP),
-                new NodeEdge(sourceWP, destinationWP, Type.TRANSPORT));
-    }
-
-    /**
-     * Loads all transport data from the {@code transports.csv} resource and constructs the full transport map.
-     *
-     * @return A {@link HashMap} containing all transports, keyed by origin {@link WorldPoint}
-     */
-    public static HashMap<WorldPoint, List<Transport>> loadAllFromResources() {
-        HashMap<WorldPoint, List<Transport>> transports = new HashMap<>();
-
-        addTransports(transports, worldPointPairs);
-        addSpiritTrees(transports, worldPointPairs);
-        addFairyRings(transports, worldPointPairs);
-
-        return transports;
-    }
-
-    /**
-     * Adds all spirit tree teleports to viable transports.
-     *
-     * @param transports      Map of transports to populate to
-     * @param worldPointPairs Map used to store details of transport
-     */
-    private static void addSpiritTrees(HashMap<WorldPoint, List<Transport>> transports, Map<WorldPointPair, NodeEdge> worldPointPairs) {
-        for (SpiritTree spiritTreeSource : SpiritTree.values()) {
-            for (SpiritTree spiritTreeDestination : SpiritTree.values()) {
-                if (spiritTreeSource.equals(spiritTreeDestination)) {
-                    continue;
-                }
-
-                Transport transport = new Transport(spiritTreeSource.getWorldPoint(), spiritTreeDestination.getWorldPoint(), Type.SPIRIT_TREE);
-                transports.computeIfAbsent(spiritTreeSource.getWorldPoint(), k -> new ArrayList<>()).add(transport);
-            }
-        }
-
-        addTransports(transports, worldPointPairs);
+        Transport transport = new Transport(sourceWP, destinationWP, TransportType.TRANSPORT);
+        addTransport(sourceWP, destinationWP, transport, transports);
     }
 
     /**
      * Adds all fairy ring teleports to viable transports.
      *
-     * @param transports      Map of transports to populate to
-     * @param worldPointPairs Map used to store details of transport
+     * @param playerProperties Transports unlocked for player
+     * @param transports       Map of transports to populate to
      */
-    private static void addFairyRings(HashMap<WorldPoint, List<Transport>> transports, Map<WorldPointPair, NodeEdge> worldPointPairs) {
+    private static void addFairyRings(PlayerProperties playerProperties, HashMap<WorldPoint, List<Transport>> transports) {
+        if (!playerProperties.isFairyRingsUnlocked()) {
+            return;
+        }
+
         for (FairyRing fairyRingSource : FairyRing.values()) {
             for (FairyRing fairyRingDestination : FairyRing.values()) {
                 if (fairyRingSource.equals(fairyRingDestination)) {
                     continue;
                 }
 
-                Transport transport = new Transport(fairyRingSource.getWorldPoint(), fairyRingDestination.getWorldPoint(), Type.FAIRY_RING);
-                transports.computeIfAbsent(fairyRingSource.getWorldPoint(), k -> new ArrayList<>()).add(transport);
+                Transport transport = new Transport(fairyRingSource.getWorldPoint(), fairyRingDestination.getWorldPoint(), TransportType.FAIRY_RING);
+                addTransport(fairyRingSource.getWorldPoint(), fairyRingDestination.getWorldPoint(), transport, transports);
             }
         }
+    }
 
-        addTransports(transports, worldPointPairs);
+    /**
+     * Adds all spirit tree teleports to viable transports.
+     *
+     * @param playerProperties Transports unlocked for player
+     * @param transports       Map of transports to populate to
+     */
+    private static void addSpiritTrees(PlayerProperties playerProperties, HashMap<WorldPoint, List<Transport>> transports) {
+        if (!playerProperties.isSpiritTreesUnlocked()) {
+            return;
+        }
+
+        for (SpiritTree spiritTreeSource : SpiritTree.values()) {
+            for (SpiritTree spiritTreeDestination : SpiritTree.values()) {
+                if (spiritTreeSource.equals(spiritTreeDestination)) {
+                    continue;
+                }
+
+                Transport transport = new Transport(spiritTreeSource.getWorldPoint(), spiritTreeDestination.getWorldPoint(), TransportType.SPIRIT_TREE);
+                addTransport(spiritTreeSource.getWorldPoint(), spiritTreeDestination.getWorldPoint(), transport, transports);
+            }
+        }
     }
 }
