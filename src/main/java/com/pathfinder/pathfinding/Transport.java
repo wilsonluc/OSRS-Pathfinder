@@ -2,6 +2,9 @@ package com.pathfinder.pathfinding;
 
 import com.pathfinder.pathfinding.node.NodeEdge;
 import com.pathfinder.enums.TransportType;
+import com.pathfinder.pathfinding.requirement.DiaryReq;
+import com.pathfinder.pathfinding.requirement.QuestReq;
+import com.pathfinder.pathfinding.requirement.SkillReq;
 import com.pathfinder.pathfinding.transports.FairyRing;
 import com.pathfinder.pathfinding.transports.SpiritTree;
 import com.pathfinder.util.Util;
@@ -74,6 +77,8 @@ public record Transport(@Getter WorldPoint origin, @Getter WorldPoint destinatio
      * @param transports    Map of all transports, using WorldPoint as key
      */
     private static void addTransport(WorldPoint sourceWP, WorldPoint destinationWP, Transport transport, HashMap<WorldPoint, List<Transport>> transports) {
+        // TODO:
+
         transports.computeIfAbsent(sourceWP, k -> new ArrayList<>()).add(transport);
         worldPointPairs.putIfAbsent(new WorldPointPair(sourceWP, destinationWP),
                 new NodeEdge(sourceWP, destinationWP, TransportType.TRANSPORT));
@@ -111,16 +116,16 @@ public record Transport(@Getter WorldPoint origin, @Getter WorldPoint destinatio
             return;
         }
 
-        String[] splitString = transportLine.split(",");
-        if (splitString.length < 5) {
-            return;
-        }
+        String[] splitString = transportLine.split(",", -1);
 
         WorldPoint sourceWP = Util.getWorldPoint(splitString[0]);
         WorldPoint destinationWP = Util.getWorldPoint(splitString[1]);
-        // TODO: Implement filtering based on player properties
         String menuOption = splitString[2];
         Integer objectID = Integer.parseInt(splitString[4]);
+        SkillReq skillReq = Util.getSkillReq(splitString[5]);
+        QuestReq questReq = Util.getQuestReq(splitString[6]);
+        DiaryReq diaryReq = Util.getDiaryReq(splitString[6]);
+        // TODO: Add extra fields to transports
 
         Transport transport = new Transport(sourceWP, destinationWP, TransportType.TRANSPORT);
         addTransport(sourceWP, destinationWP, transport, transports);
