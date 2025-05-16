@@ -3,6 +3,7 @@ package com.pathfinder.pathfinding;
 
 import com.pathfinder.pathfinding.node.Node;
 import com.pathfinder.pathfinding.node.TransportNode;
+import com.pathfinder.pathfinding.transports.Transport;
 import com.pathfinder.util.WorldPointUtil;
 
 import java.util.ArrayList;

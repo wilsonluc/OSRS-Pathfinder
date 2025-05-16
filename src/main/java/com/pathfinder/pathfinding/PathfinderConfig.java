@@ -1,17 +1,17 @@
 package com.pathfinder.pathfinding;
 
+import com.pathfinder.pathfinding.transports.Transport;
 import com.pathfinder.util.PrimitiveIntHashMap;
 import com.pathfinder.util.WorldPointUtil;
 import lombok.Getter;
-import net.runelite.api.Quest;
-import net.runelite.api.QuestState;
-import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.pathfinder.enums.WorldAreas.*;
 
 /**
  * Configuration & settings for pathfinder.
@@ -114,10 +114,11 @@ public class PathfinderConfig {
      * @return {@code true} if the point is in the wilderness, {@code false} otherwise
      */
     public static boolean isInWilderness(WorldPoint worldPoint) {
-        if (Transport.FEROX.contains(worldPoint)) {
+        if (FEROX.getWorldArea().contains(worldPoint)) {
             return false;
         }
-        return Transport.WILDY.distanceTo(worldPoint) == 0 || Transport.UNDERGROUND_WILDY.distanceTo(worldPoint) == 0;
+        return WILDY.getWorldArea().distanceTo(worldPoint) == 0
+                || UNDERGROUND_WILDY.getWorldArea().distanceTo(worldPoint) == 0;
     }
 
     /**
@@ -127,10 +128,11 @@ public class PathfinderConfig {
      * @return {@code true} if the point is in the wilderness, {@code false} otherwise
      */
     public static boolean isInWilderness(int packedPoint) {
-        if (WorldPointUtil.distanceToArea(packedPoint, Transport.FEROX) == 0) {
+        if (WorldPointUtil.distanceToArea(packedPoint, FEROX.getWorldArea()) == 0) {
             return false;
         }
-        return WorldPointUtil.distanceToArea(packedPoint, Transport.WILDY) == 0 || WorldPointUtil.distanceToArea(packedPoint, Transport.UNDERGROUND_WILDY) == 0;
+        return WorldPointUtil.distanceToArea(packedPoint, WILDY.getWorldArea()) == 0
+                || WorldPointUtil.distanceToArea(packedPoint, UNDERGROUND_WILDY.getWorldArea()) == 0;
     }
 
     /**

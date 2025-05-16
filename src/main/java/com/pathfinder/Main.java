@@ -1,6 +1,8 @@
 package com.pathfinder;
 
 import com.pathfinder.pathfinding.*;
+import com.pathfinder.pathfinding.transports.Transport;
+import com.pathfinder.pathfinding.transports.TransportHandler;
 import net.runelite.api.coords.WorldPoint;
 
 import java.util.List;
@@ -26,9 +28,9 @@ public class Main {
         // Set up config
         SplitFlagMap map = SplitFlagMap.fromResources();
         PlayerProperties playerProperties = new PlayerProperties(true, true);
-        Map<WorldPoint, List<Transport>> transports = Transport.loadAllFromResources(playerProperties);
+        TransportHandler.setPlayerProperties(playerProperties);
+        Map<WorldPoint, List<Transport>> transports = TransportHandler.loadAllFromResources();
         PathfinderConfig pathfinderConfig = new PathfinderConfig(map, transports);
-        // TODO: Add player properties
 
         // Run pathfinder and get path
         System.out.println("Start WP: " + startWP);
