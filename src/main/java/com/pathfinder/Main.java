@@ -43,11 +43,11 @@ public class Main {
         Set<Diary> diariesCompleted = new HashSet<>();
 
         PlayerProperties playerProperties = new PlayerProperties(
-                isFairyRingsUnlocked,
-                isSpiritTreesUnlocked,
                 skillLevels,
                 questsCompleted,
-                diariesCompleted
+                diariesCompleted,
+                isFairyRingsUnlocked,
+                isSpiritTreesUnlocked
         );
         TransportHandler.setPlayerProperties(playerProperties);
     }

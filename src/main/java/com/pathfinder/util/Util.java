@@ -1,6 +1,7 @@
 package com.pathfinder.util;
 
 import com.pathfinder.enums.Diary;
+import com.pathfinder.pathfinding.PlayerProperties;
 import com.pathfinder.pathfinding.requirement.DiaryReq;
 import com.pathfinder.pathfinding.requirement.QuestReq;
 import com.pathfinder.pathfinding.requirement.SkillReq;
@@ -11,8 +12,7 @@ import net.runelite.api.coords.WorldPoint;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Utility class providing common operations.
@@ -61,22 +61,24 @@ public class Util {
     }
 
     /**
-     * Convert to {@link SkillReq} from String.
+     * Convert to {@link Set<SkillReq>} from String.
      *
-     * @param skillReqString String version of {@link SkillReq}
-     * @return {@link SkillReq} representation of skillReqString
+     * @param skillReqString String version of {@link Set<SkillReq>}
+     * @return {@link Set<SkillReq>} representation of skillReqString
      */
-    public static SkillReq getSkillReq(String skillReqString) {
+    public static Set<SkillReq> getSkillReqs(String skillReqString) {
         try {
-            String[] sourceSplit = skillReqString.split(" ");
-            if (sourceSplit.length == 2) {
-                String skillString = sourceSplit[1];
-                for (Skill skill : Skill.values()) {
-                    if (skill.getName().equalsIgnoreCase(skillString)) {
-                        return new SkillReq(skill, Integer.parseInt(sourceSplit[0]));
-                    }
+            Set<SkillReq> skillReqs = new HashSet<>();
+            String[] skillSplitSemicolonArr = skillReqString.split(";");
+
+
+            for (String skillSplitSemicolon : skillSplitSemicolonArr) {
+                String[] skillSplitSpaceArr = skillSplitSemicolon.split(" ");
+                if (skillSplitSpaceArr.length == 2) {
+                    skillReqs.add(new SkillReq(Skill.valueOf(skillSplitSpaceArr[1].toUpperCase()), Integer.parseInt(skillSplitSpaceArr[0])));
                 }
             }
+            return skillReqs;
         } catch (NumberFormatException e) {
             System.err.println("Error: Level of skill is not a valid integer.");
         } catch (Exception e) {
@@ -163,5 +165,55 @@ public class Util {
             System.err.println("Unexpected error occurred.");
         }
         return null;
+    }
+
+    /**
+     * Check if the player meets the skill requirements.
+     *
+     * @param playerProperties The player's properties containing data such as quests and skills.
+     * @param skillReqs        The skill requirements to check.
+     * @return {@code true} if the player meets all skill requirements, {@code false} otherwise.
+     */
+    public static boolean isSkillReqsMet(PlayerProperties playerProperties, Set<SkillReq> skillReqs) {
+        if (skillReqs == null) {
+            return true;
+        }
+
+        for (SkillReq skillReq : skillReqs) {
+            if (playerProperties.getSkillLevel(skillReq.skill()) < skillReq.level()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check if the player meets the skill requirements.
+     *
+     * @param playerProperties The player's properties containing data such as quests and skills.
+     * @param questReq         The quest requirement to check.
+     * @return {@code true} if the player meets all skill requirements, {@code false} otherwise.
+     */
+    public static boolean isQuestReqMet(PlayerProperties playerProperties, QuestReq questReq) {
+        if (questReq == null) {
+            return true;
+        }
+
+        return playerProperties.getQuestCompleted(questReq.quest());
+    }
+
+    /**
+     * Check if the player meets the diary requirements.
+     *
+     * @param playerProperties The player's properties containing data such as quests and skills.
+     * @param diaryReq         The diary requirement to check.
+     * @return {@code true} if the player meets all diary requirements, {@code false} otherwise.
+     */
+    public static boolean isDiaryReqMet(PlayerProperties playerProperties, DiaryReq diaryReq) {
+        if (diaryReq == null) {
+            return true;
+        }
+
+        return playerProperties.getDiaryCompleted(diaryReq.diary());
     }
 }

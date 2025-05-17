@@ -97,24 +97,24 @@ public class TransportHandler {
         WorldPoint destinationWP = Util.getWorldPoint(splitString[1]);
         String menuOption = splitString[2];
         int objectID = Integer.parseInt(splitString[4]);
-        SkillReq skillReq = Util.getSkillReq(splitString[5]);
+        Set<SkillReq> skillReqs = Util.getSkillReqs(splitString[5]);
         QuestReq questReq = Util.getQuestReq(splitString[6]);
         DiaryReq diaryReq = Util.getDiaryReq(splitString[6]);
 
         // End early if skill reqs not met
-        boolean skillReqsMet = skillReq == null || playerProperties.getSkillLevel(skillReq.skill()) < skillReq.level();
+        boolean skillReqsMet = Util.isSkillReqsMet(playerProperties, skillReqs);
         if (!skillReqsMet) {
             return;
         }
 
         // End early if quest reqs not met
-        boolean questReqsMet = questReq == null || playerProperties.getQuestCompleted(questReq.quest());
+        boolean questReqsMet = Util.isQuestReqMet(playerProperties, questReq);
         if (!questReqsMet) {
             return;
         }
 
         // End early if diary reqs not met
-        boolean diaryReqsMet = diaryReq == null || playerProperties.getDiaryCompleted(diaryReq.diary());
+        boolean diaryReqsMet = Util.isDiaryReqMet(playerProperties, diaryReq);
         if (!diaryReqsMet) {
             return;
         }
@@ -170,6 +170,4 @@ public class TransportHandler {
             }
         }
     }
-
-
 }
