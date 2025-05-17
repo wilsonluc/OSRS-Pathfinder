@@ -25,23 +25,12 @@ public class Main {
         startWP = new WorldPoint(3133, 3509, 0);
         endWP = new WorldPoint(2801, 3003, 0);
 
-        // Set up player props
-        setPlayerProperties();
-
-        // Set up config & generate path
-        generatePath(startWP, endWP);
-    }
-
-    /**
-     * Sets up player properties for testing.
-     */
-    private static void setPlayerProperties() {
-        boolean isFairyRingsUnlocked = true;
-        boolean isSpiritTreesUnlocked = true;
+        // Config player props
         Map<Skill, Integer> skillLevels = new HashMap<>();
         Set<Quest> questsCompleted = new HashSet<>();
         Set<Diary> diariesCompleted = new HashSet<>();
-
+        boolean isFairyRingsUnlocked = true;
+        boolean isSpiritTreesUnlocked = true;
         PlayerProperties playerProperties = new PlayerProperties(
                 skillLevels,
                 questsCompleted,
@@ -49,26 +38,7 @@ public class Main {
                 isFairyRingsUnlocked,
                 isSpiritTreesUnlocked
         );
-        TransportHandler.setPlayerProperties(playerProperties);
-    }
 
-    /**
-     * Generates a path from start to end using the Pathfinder.
-     *
-     * @param startWP The starting {@link WorldPoint}.
-     * @param endWP   The ending {@link WorldPoint}.
-     */
-    private static void generatePath(WorldPoint startWP, WorldPoint endWP) {
-        SplitFlagMap map = SplitFlagMap.fromResources();
-        Map<WorldPoint, List<Transport>> transports = TransportHandler.loadAllFromResources();
-        PathfinderConfig pathfinderConfig = new PathfinderConfig(map, transports);
-
-        // Run pathfinder and get path
-        System.out.println("Start WP: " + startWP);
-        System.out.println("End WP: " + endWP);
-        Pathfinder pathfinder = new Pathfinder(pathfinderConfig, startWP, List.of(endWP));
-        pathfinderConfig.refreshTransportData();
-        pathfinder.run();
-        System.out.println(pathfinder.getPath());
+        System.out.println(Pathfinder.generatePath(startWP, endWP, playerProperties));
     }
 }

@@ -4,11 +4,15 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.pathfinder.enums.Diary;
+import com.pathfinder.pathfinding.Pathfinder;
+import com.pathfinder.pathfinding.PlayerProperties;
 import com.pathfinder.pathfinding.node.NodeEdge;
+import net.runelite.api.Quest;
+import net.runelite.api.Skill;
 import net.runelite.api.coords.WorldPoint;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Handler for processing requests in an AWS Lambda function.
@@ -25,13 +29,25 @@ public class LambdaHandler implements RequestHandler<Request, Response> {
      */
     @Override
     public Response handleRequest(Request request, Context context) {
-        // TODO: Change this to be dynamic, is temporary placeholder
-        List<NodeEdge> path = new ArrayList<>();
-        path.add(new NodeEdge(new WorldPoint(100, 200, 0), new WorldPoint(110, 210, 0)));
-        path.add(new NodeEdge(new WorldPoint(110, 210, 0), new WorldPoint(120, 220, 0)));
+        WorldPoint startWP = new WorldPoint(request.getSourceX(), request.getSourceY(), request.getSourceZ());
+        WorldPoint destinationWP = new WorldPoint(request.getDestinationX(), request.getDestinationY(), request.getDestinationZ());
 
-        String pathJson = getPathJson(path);
-        return new Response(pathJson);
+        // Player properties
+        Map<Skill, Integer> skillLevels = request.skillLevels;
+        Set<Quest> questsCompleted = request.questsCompleted;
+        Set<Diary> diariesCompleted = request.diariesCompleted;
+        boolean isFairyRingsUnlocked = request.isFairyRingsUnlocked;
+        boolean isSpiritTreesUnlocked = request.isSpiritTreesUnlocked;
+        PlayerProperties playerProperties = new PlayerProperties(
+                skillLevels,
+                questsCompleted,
+                diariesCompleted,
+                isFairyRingsUnlocked,
+                isSpiritTreesUnlocked
+        );
+
+        List<WorldPoint> path = Pathfinder.generatePath(startWP, destinationWP, playerProperties);
+        return new Response(path.toString());
     }
 
     /**

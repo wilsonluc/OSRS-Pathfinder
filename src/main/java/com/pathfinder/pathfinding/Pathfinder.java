@@ -2,6 +2,8 @@ package com.pathfinder.pathfinding;
 
 import com.pathfinder.pathfinding.node.Node;
 import com.pathfinder.pathfinding.node.TransportNode;
+import com.pathfinder.pathfinding.transports.Transport;
+import com.pathfinder.pathfinding.transports.TransportHandler;
 import com.pathfinder.util.WorldPointUtil;
 import lombok.Getter;
 import net.runelite.api.coords.WorldPoint;
@@ -219,5 +221,27 @@ public class Pathfinder implements Runnable {
         boundary.clear();
         visited.clear();
         pending.clear();
+    }
+
+    /**
+     * Generates a path from the start to the end {@link WorldPoint} using the provided player properties.
+     *
+     * @param startWP          The starting {@link WorldPoint}
+     * @param endWP            The target {@link WorldPoint}
+     * @param playerProperties The player's properties for pathfinding such as quests and skills
+     * @return A list of {@link WorldPoint} representing the path
+     */
+    public static List<WorldPoint> generatePath(WorldPoint startWP, WorldPoint endWP, PlayerProperties playerProperties) {
+        TransportHandler.setPlayerProperties(playerProperties);
+        SplitFlagMap map = SplitFlagMap.fromResources();
+        Map<WorldPoint, List<Transport>> transports = TransportHandler.loadAllFromResources();
+        PathfinderConfig pathfinderConfig = new PathfinderConfig(map, transports);
+
+        System.out.println("Start WP: " + startWP);
+        System.out.println("End WP: " + endWP);
+        Pathfinder pathfinder = new Pathfinder(pathfinderConfig, startWP, List.of(endWP));
+        pathfinderConfig.refreshTransportData();
+        pathfinder.run();
+        return pathfinder.getPath();
     }
 }
