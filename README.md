@@ -46,22 +46,28 @@ Once you've found a game cache that you're happy with, click the 'More' button a
 
 ### 2. Download Cache (.dat2/idx) + Keys (JSON)
 
-Download both Cache (.dat2/idx) and Keys (JSON), storing them in an easily accessible location
+1. Download and extract Cache (.dat2/idx)
+2. Download Keys (JSON) and move it to the folder created in step 1 (it should be next to the cache folder)
+3. Rename *.json file to keys.json
+4. Replace all instances of the words 'mapsquare' with 'region' and 'key' with 'keys' inside keys.json
 
 ### 3. Configure Directories and Paths
 
-1. Extract the downloaded zip file, and use the path to the cache folder as the cachedir
-    - e.g., `--cachedir "C:\Users\Wilson\Downloads\cache-oldschool-live-en-b230-2025-05-14-10-45-05-openrs2#2186\cache"`
-2. Set xteapath to the downloaded json file
-    - e.g., `--xteapath "C:\Users\Wilson\Downloads\keys-oldschool-live-en-b230-2025-05-14-10-45-05-openrs2#2186.json"`
-3. Set outputdir to the desired output directory (you could export to an external location or straight to resources)
+1. Add flag for path of extracted game-pack to CLI arguments of CollisionMapDumper
     - e.g.,
-      `--outputdir "C:\Users\Wilson\Downloads\cache-oldschool-live-en-b230-2025-05-14-10-45-05-openrs2#2186\output"`
+      `--cachedir "C:\Users\Wilson\Downloads\cache-oldschool-live-en-b225-2024-09-11-11-45-05-openrs2#1895\cache" `
+2. Add flag for path of keys.json to CLI arguments of CollisionMapDumper
+    - e.g.,
+      `--xteapath "C:\Users\Wilson\Downloads\cache-oldschool-live-en-b225-2024-09-11-11-45-05-openrs2#1895\keys.json"`
+3. Add flag for path to store collision-map.zip after running CollisionMapDumper
+    - e.g.,
+      `--outputdir "C:\Users\Wilson\Downloads\cache-oldschool-live-en-b225-2024-09-11-11-45-05-openrs2#1895\output"`
 
 This process should result in something that looks like the following:
 ![](run_configuration.png)
 
 ### 4. Execute CollisionMapDumper
 
-Run CollisionMapDumper with command line arguments which were set up in the previous step
+Run CollisionMapDumper in debug mode. Upon completion, a collision map should be generated in the output directory
+specified in step 3.3
 
