@@ -137,7 +137,7 @@ public class VisitedTiles {
      * @return The 1D array index.
      */
     private int getRegionIndex(int regionX, int regionY) {
-        return (regionX - regionExtents.minX()) + (regionY - regionExtents.minY()) * widthInclusive;
+        return (regionX - regionExtents.getMinX()) + (regionY - regionExtents.getMinY()) * widthInclusive;
     }
 
     /**

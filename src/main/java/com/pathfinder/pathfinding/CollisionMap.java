@@ -143,10 +143,10 @@ public class CollisionMap {
         List<Transport> transports = config.getTransportsPacked().getOrDefault(node.packedWP, List.of());
 
         for (Transport transport : transports) {
-            if (visited.get(transport.destination())) {
+            if (visited.get(transport.getDestination())) {
                 continue;
             }
-            neighbors.add(new TransportNode(transport.destination(), node, transport.transportType().getAdditionalCost()));
+            neighbors.add(new TransportNode(transport.getDestination(), node, transport.getTransportType().getAdditionalCost()));
         }
 
         if (isBlocked(x, y, z)) {
@@ -178,10 +178,10 @@ public class CollisionMap {
             } else if (Math.abs(d.x + d.y) == 1 && isBlocked(x + d.x, y + d.y, z)) {
                 List<Transport> neighborTransports = config.getTransportsPacked().getOrDefault(neighborPacked, List.of());
                 for (Transport transport : neighborTransports) {
-                    if (visited.get(transport.origin())) {
+                    if (visited.get(transport.getOrigin())) {
                         continue;
                     }
-                    neighbors.add(new Node(transport.origin(), node));
+                    neighbors.add(new Node(transport.getOrigin(), node));
                 }
             }
         }

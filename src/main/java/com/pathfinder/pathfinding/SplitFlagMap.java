@@ -160,21 +160,59 @@ public class SplitFlagMap {
     }
 
     /**
-     * Record holding the spatial bounds of all regions stored in this map.
+     * Class holding the spatial bounds of all regions stored in this map.
      * Provides utilities to calculate grid dimensions.
-     *
-     * @param minX Minimum region X
-     * @param minY Minimum region Y
-     * @param maxX Maximum region X
-     * @param maxY Maximum region Y
      */
-    public record RegionExtent(int minX, int minY, int maxX, int maxY) {
+    @Getter
+    public static class RegionExtent {
+        private final int minX;
+        private final int minY;
+        private final int maxX;
+        private final int maxY;
+
+        public RegionExtent(int minX, int minY, int maxX, int maxY) {
+            this.minX = minX;
+            this.minY = minY;
+            this.maxX = maxX;
+            this.maxY = maxY;
+        }
+
         public int getWidth() {
             return maxX - minX;
         }
 
         public int getHeight() {
             return maxY - minY;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (!(obj instanceof RegionExtent)) return false;
+            RegionExtent other = (RegionExtent) obj;
+            return minX == other.minX &&
+                    minY == other.minY &&
+                    maxX == other.maxX &&
+                    maxY == other.maxY;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Integer.hashCode(minX);
+            result = 31 * result + Integer.hashCode(minY);
+            result = 31 * result + Integer.hashCode(maxX);
+            result = 31 * result + Integer.hashCode(maxY);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "RegionExtent{" +
+                    "minX=" + minX +
+                    ", minY=" + minY +
+                    ", maxX=" + maxX +
+                    ", maxY=" + maxY +
+                    '}';
         }
     }
 }

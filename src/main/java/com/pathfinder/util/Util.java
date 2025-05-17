@@ -180,7 +180,7 @@ public class Util {
         }
 
         for (SkillReq skillReq : skillReqs) {
-            if (playerProperties.getSkillLevel(skillReq.skill()) < skillReq.level()) {
+            if (playerProperties.getSkillLevel(skillReq.getSkill()) < skillReq.getLevel()) {
                 return false;
             }
         }
@@ -199,7 +199,7 @@ public class Util {
             return true;
         }
 
-        return playerProperties.getQuestCompleted(questReq.quest());
+        return playerProperties.getQuestCompleted(questReq.getQuest());
     }
 
     /**
@@ -229,6 +229,6 @@ public class Util {
             return true;
         }
 
-        return playerProperties.getDiaryCompleted(diaryReq.diary());
+        return playerProperties.getDiaryCompleted(diaryReq.getDiary());
     }
 }

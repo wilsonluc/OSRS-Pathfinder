@@ -3,6 +3,12 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.0'
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
 group = 'com.pathfinder'
 version = '1.0-SNAPSHOT'
 
