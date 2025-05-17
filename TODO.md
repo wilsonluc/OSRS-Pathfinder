@@ -1,4 +1,4 @@
 **TODO LIST:**
-- Item / level / skill reqs
-- Visualiser
 - Collision map gen
+- More in-depth requirements + transports
+- Visualiser

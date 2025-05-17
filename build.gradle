@@ -17,6 +17,12 @@ dependencies {
     // RuneLite
     implementation 'net.runelite:runelite-api:latest.release'
 
+    // Collision Map Dumper
+    implementation 'commons-cli:commons-cli:1.5.0'
+    implementation 'net.java.dev.jna:jna:5.13.0'
+    implementation 'org.apache.commons:commons-compress:1.26.0'
+//    implementation 'ch.qos.logback:logback-classic:1.4.11'
+
     // Annotations
     implementation 'com.google.inject:guice:5.0.1'
     implementation 'com.google.code.gson:gson:2.8.9'
@@ -25,14 +31,13 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
-    // JUnit 5 for testing
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
-
     // AWS
     implementation 'com.amazonaws:aws-lambda-java-core:1.2.1'
     implementation 'com.amazonaws:aws-lambda-java-events:3.10.0'
 
+    // Unit Testing
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }

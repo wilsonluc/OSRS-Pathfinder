@@ -188,11 +188,11 @@ public class Util {
     }
 
     /**
-     * Check if the player meets the skill requirements.
+     * Check if the player meets the quest requirements.
      *
      * @param playerProperties The player's properties containing data such as quests and skills.
      * @param questReq         The quest requirement to check.
-     * @return {@code true} if the player meets all skill requirements, {@code false} otherwise.
+     * @return {@code true} if the player meets the quest requirements, {@code false} otherwise.
      */
     public static boolean isQuestReqMet(PlayerProperties playerProperties, QuestReq questReq) {
         if (questReq == null) {
@@ -203,11 +203,26 @@ public class Util {
     }
 
     /**
+     * Check if the player meets the quest requirements.
+     *
+     * @param playerProperties The player's properties containing data such as quests and skills.
+     * @param quest            The quest to check.
+     * @return {@code true} if the player meets the quest requirements, {@code false} otherwise.
+     */
+    public static boolean isQuestReqMet(PlayerProperties playerProperties, Quest quest) {
+        if (quest == null) {
+            return true;
+        }
+
+        return playerProperties.getQuestCompleted(quest);
+    }
+
+    /**
      * Check if the player meets the diary requirements.
      *
      * @param playerProperties The player's properties containing data such as quests and skills.
      * @param diaryReq         The diary requirement to check.
-     * @return {@code true} if the player meets all diary requirements, {@code false} otherwise.
+     * @return {@code true} if the player meets the diary requirements, {@code false} otherwise.
      */
     public static boolean isDiaryReqMet(PlayerProperties playerProperties, DiaryReq diaryReq) {
         if (diaryReq == null) {
