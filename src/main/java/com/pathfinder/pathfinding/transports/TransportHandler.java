@@ -9,7 +9,6 @@ import com.pathfinder.pathfinding.requirement.QuestReq;
 import com.pathfinder.pathfinding.requirement.SkillReq;
 import com.pathfinder.util.Util;
 import lombok.Setter;
-import net.runelite.api.Quest;
 import net.runelite.api.coords.WorldPoint;
 
 import java.io.InputStream;
@@ -120,7 +119,7 @@ public class TransportHandler {
             return;
         }
 
-        Transport transport = new Transport(TransportType.TRANSPORT, destinationWP, sourceWP, menuOption, objectID);
+        Transport transport = new Transport(TransportType.TRANSPORT, destinationWP, sourceWP, objectID, menuOption);
         addTransport(sourceWP, destinationWP, transport);
     }
 
@@ -129,8 +128,7 @@ public class TransportHandler {
      */
     private static void addFairyRings() {
         // End early if quest reqs not met
-        boolean questReqsMet = playerProperties.getQuestCompleted(Quest.FAIRYTALE_I__GROWING_PAINS);
-        if (!questReqsMet) {
+        if (!playerProperties.isFairyRingsUnlocked()) {
             return;
         }
 
@@ -154,8 +152,7 @@ public class TransportHandler {
      */
     private static void addSpiritTrees() {
         // End early if quest reqs not met
-        boolean questReqsMet = playerProperties.getQuestCompleted(Quest.THE_GRAND_TREE);
-        if (!questReqsMet) {
+        if (!playerProperties.isSpiritTreesUnlocked()) {
             return;
         }
 
@@ -168,7 +165,7 @@ public class TransportHandler {
 
                 WorldPoint sourceWP = spiritTreeSource.getWorldPoint();
                 WorldPoint destinationWP = spiritTreeDestination.getWorldPoint();
-                Transport transport = new Transport(TransportType.SPIRIT_TREE, destinationWP, sourceWP, null, null);
+                Transport transport = new Transport(TransportType.SPIRIT_TREE, destinationWP, sourceWP, spiritTreeSource.getId(), spiritTreeSource.getMenuOption());
                 addTransport(sourceWP, destinationWP, transport);
             }
         }

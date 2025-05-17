@@ -11,12 +11,12 @@ import javax.annotation.Nullable;
  * @param transportType The type of this transport.
  * @param destination   The ending point of this transport.
  * @param origin        The starting point of this transport.
- * @param menuOption    Menu option to use this transport.
  * @param objectID      Object ID associated with this transport.
+ * @param menuOption    Menu option to use this transport.
  */
 public record Transport(TransportType transportType,
                         WorldPoint destination,
                         WorldPoint origin,
-                        @Nullable String menuOption,
-                        @Nullable Integer objectID) {
+                        @Nullable Integer objectID,
+                        @Nullable String menuOption) {
 }
