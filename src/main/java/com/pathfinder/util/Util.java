@@ -179,11 +179,11 @@ public class Util {
             return true;
         }
 
-        for (SkillReq skillReq : skillReqs) {
-            if (playerProperties.getSkillLevel(skillReq.getSkill()) < skillReq.getLevel()) {
-                return false;
-            }
-        }
+//        for (SkillReq skillReq : skillReqs) {
+//            if (playerProperties.getSkillLevel(skillReq.getSkill()) < skillReq.getLevel()) {
+//                return false;
+//            }
+//        }
         return true;
     }
 
@@ -199,7 +199,8 @@ public class Util {
             return true;
         }
 
-        return playerProperties.getQuestCompleted(questReq.getQuest());
+//        return playerProperties.getQuestCompleted(questReq.getQuest());
+        return true;
     }
 
     /**
@@ -214,7 +215,8 @@ public class Util {
             return true;
         }
 
-        return playerProperties.getQuestCompleted(quest);
+//        return playerProperties.getQuestCompleted(quest);
+        return true;
     }
 
     /**
@@ -229,6 +231,7 @@ public class Util {
             return true;
         }
 
-        return playerProperties.getDiaryCompleted(diaryReq.getDiary());
+//        return playerProperties.getDiaryCompleted(diaryReq.getDiary());
+        return true;
     }
 }

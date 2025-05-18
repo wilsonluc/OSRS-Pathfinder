@@ -2,11 +2,8 @@ package com.pathfinder.lambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.pathfinder.enums.Diary;
 import com.pathfinder.pathfinding.Pathfinder;
 import com.pathfinder.pathfinding.PlayerProperties;
-import net.runelite.api.Quest;
-import net.runelite.api.Skill;
 import net.runelite.api.coords.WorldPoint;
 
 import java.util.*;
@@ -32,17 +29,17 @@ public class LambdaHandler implements RequestHandler<Request, Response> {
         WorldPoint destinationWP = new WorldPoint(request.getDestinationX(), request.getDestinationY(), request.getDestinationZ());
 
         // Player properties
-        Map<Skill, Integer> skillLevels = request.skillLevels;
-        Set<Quest> questsCompleted = request.questsCompleted;
-        Set<Diary> diariesCompleted = request.diariesCompleted;
-        boolean isFairyRingsUnlocked = request.isFairyRingsUnlocked;
-        boolean isSpiritTreesUnlocked = request.isSpiritTreesUnlocked;
+        boolean fairyRingsUnlocked = request.isFairyRingsUnlocked();
+        boolean spiritTreesUnlocked = request.isSpiritTreesUnlocked();
+//        Map<Skill, Integer> skillLevels = request.skillLevels;
+//        Set<Quest> questsCompleted = request.questsCompleted;
+//        Set<Diary> diariesCompleted = request.diariesCompleted;
         PlayerProperties playerProperties = new PlayerProperties(
-                skillLevels,
-                questsCompleted,
-                diariesCompleted,
-                isFairyRingsUnlocked,
-                isSpiritTreesUnlocked
+                fairyRingsUnlocked,
+                spiritTreesUnlocked
+//                skillLevels,
+//                questsCompleted,
+//                diariesCompleted,
         );
 
         List<WorldPoint> path = Pathfinder.generatePath(startWP, destinationWP, playerProperties);

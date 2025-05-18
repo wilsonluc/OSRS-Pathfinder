@@ -239,6 +239,8 @@ public class Pathfinder implements Runnable {
 
         System.out.println("Start WP: " + startWP);
         System.out.println("End WP: " + endWP);
+        System.out.println("FAIRY RINGS: " + playerProperties.isFairyRingsUnlocked());
+        System.out.println("SPIRIT TREES: " + playerProperties.isSpiritTreesUnlocked());
         Pathfinder pathfinder = new Pathfinder(pathfinderConfig, startWP, List.of(endWP));
         pathfinderConfig.refreshTransportData();
         pathfinder.run();

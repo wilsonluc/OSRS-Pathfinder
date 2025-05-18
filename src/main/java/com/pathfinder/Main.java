@@ -27,15 +27,15 @@ public class Main {
         endWP = new WorldPoint(2801, 3003, 0);
 
         // Config player props
-        Map<Skill, Integer> skillLevels = new HashMap<>();
-        Set<Quest> questsCompleted = new HashSet<>();
-        Set<Diary> diariesCompleted = new HashSet<>();
+//        Map<Skill, Integer> skillLevels = new HashMap<>();
+//        Set<Quest> questsCompleted = new HashSet<>();
+//        Set<Diary> diariesCompleted = new HashSet<>();
         boolean isFairyRingsUnlocked = true;
-        boolean isSpiritTreesUnlocked = true;
+        boolean isSpiritTreesUnlocked = false;
         PlayerProperties playerProperties = new PlayerProperties(
-                skillLevels,
-                questsCompleted,
-                diariesCompleted,
+//                skillLevels,
+//                questsCompleted,
+//                diariesCompleted,
                 isFairyRingsUnlocked,
                 isSpiritTreesUnlocked
         );
