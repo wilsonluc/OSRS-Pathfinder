@@ -31,4 +31,21 @@ public class Request {
     Map<Skill, Integer> skillLevels = new HashMap<>();
     Set<Quest> questsCompleted = new HashSet<>();
     Set<Diary> diariesCompleted = new HashSet<>();
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "sourceX=" + sourceX +
+                ", sourceY=" + sourceY +
+                ", sourceZ=" + sourceZ +
+                ", destinationX=" + destinationX +
+                ", destinationY=" + destinationY +
+                ", destinationZ=" + destinationZ +
+                ", isFairyRingsUnlocked=" + isFairyRingsUnlocked +
+                ", isSpiritTreesUnlocked=" + isSpiritTreesUnlocked +
+                ", skillLevels=" + skillLevels +
+                ", questsCompleted=" + questsCompleted +
+                ", diariesCompleted=" + diariesCompleted +
+                '}';
+    }
 }

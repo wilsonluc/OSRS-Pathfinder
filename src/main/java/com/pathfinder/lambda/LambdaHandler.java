@@ -2,12 +2,9 @@ package com.pathfinder.lambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.pathfinder.enums.Diary;
 import com.pathfinder.pathfinding.Pathfinder;
 import com.pathfinder.pathfinding.PlayerProperties;
-import com.pathfinder.pathfinding.node.NodeEdge;
 import net.runelite.api.Quest;
 import net.runelite.api.Skill;
 import net.runelite.api.coords.WorldPoint;
@@ -29,6 +26,8 @@ public class LambdaHandler implements RequestHandler<Request, Response> {
      */
     @Override
     public Response handleRequest(Request request, Context context) {
+        System.out.println("Request string: " + request.toString());
+
         WorldPoint startWP = new WorldPoint(request.getSourceX(), request.getSourceY(), request.getSourceZ());
         WorldPoint destinationWP = new WorldPoint(request.getDestinationX(), request.getDestinationY(), request.getDestinationZ());
 
@@ -47,18 +46,23 @@ public class LambdaHandler implements RequestHandler<Request, Response> {
         );
 
         List<WorldPoint> path = Pathfinder.generatePath(startWP, destinationWP, playerProperties);
-        return new Response(path.toString());
+        Map<String, Object> pathMap = getPathMap(path);
+        return new Response(pathMap);
     }
 
-    /**
-     * Converts list of CustomWorldPoint objects to a JSON string
-     *
-     * @param path List of CustomWorldPoint objects that represent a path
-     * @return JSON string representation of the path, wrapped under "path"
-     */
-    public String getPathJson(List<NodeEdge> path) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.add("path", new Gson().toJsonTree(path));
-        return jsonObject.toString();
+    public Map<String, Object> getPathMap(List<WorldPoint> path) {
+        Map<String, Object> responseMap = new HashMap<>();
+        List<Map<String, Integer>> pathList = new ArrayList<>();
+
+        for (WorldPoint wp : path) {
+            Map<String, Integer> pointMap = new HashMap<>();
+            pointMap.put("x", wp.getX());
+            pointMap.put("y", wp.getY());
+            pointMap.put("z", wp.getPlane());
+            pathList.add(pointMap);
+        }
+
+        responseMap.put("path", pathList);
+        return responseMap;
     }
 }

@@ -2,8 +2,6 @@ package com.pathfinder;
 
 import com.pathfinder.enums.Diary;
 import com.pathfinder.pathfinding.*;
-import com.pathfinder.pathfinding.transports.Transport;
-import com.pathfinder.pathfinding.transports.TransportHandler;
 import net.runelite.api.Quest;
 import net.runelite.api.Skill;
 import net.runelite.api.coords.WorldPoint;
@@ -13,9 +11,12 @@ import java.util.*;
 public class Main {
     // TODO: Implement as SpringBoot application to allow for local testing
     public static void main(String[] args) {
+        WorldPoint startWP;
+        WorldPoint endWP;
+
         // Sample config, start & end points
-        WorldPoint startWP = new WorldPoint(3143, 3514, 0);
-        WorldPoint endWP = new WorldPoint(3137, 3515, 0);
+        startWP = new WorldPoint(3143, 3514, 0);
+        endWP = new WorldPoint(3137, 3515, 0);
 
         // Spirit tree testing coords
         startWP = new WorldPoint(3179, 3506, 0);
