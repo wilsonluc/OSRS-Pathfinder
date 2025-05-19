@@ -23,12 +23,6 @@ dependencies {
     // RuneLite
     implementation 'net.runelite:runelite-api:latest.release'
 
-    // Collision Map Dumper
-    implementation 'commons-cli:commons-cli:1.5.0'
-    implementation 'net.java.dev.jna:jna:5.13.0'
-    implementation 'org.apache.commons:commons-compress:1.26.0'
-//    implementation 'ch.qos.logback:logback-classic:1.4.11'
-
     // Annotations
     implementation 'com.google.inject:guice:5.0.1'
     implementation 'com.google.code.gson:gson:2.8.9'
